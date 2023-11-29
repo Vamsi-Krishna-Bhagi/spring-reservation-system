@@ -14,17 +14,12 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public ReservationDto getInventory(@PathVariable Long id) {
-        return reservationService.getInventoryByProductId(id);
-    }
-
-    @PutMapping
-    public ReservationDto createInventory(@RequestBody ReservationDto reservationDto) {
-        return reservationService.updateInventoryItem(reservationDto);
+    public ReservationDto getReservationById(@PathVariable Long id) {
+        return reservationService.getReservationById(id);
     }
 
     @PostMapping
-    public ReservationDto updateInventory(@RequestBody ReservationDto reservationDto) {
-        return reservationService.createInventoryItem(reservationDto);
+    public ReservationDto makeReservation(@RequestBody ReservationDto reservationDto) {
+        return reservationService.makeReservation(reservationDto);
     }
 }

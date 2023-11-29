@@ -4,6 +4,7 @@ import learn.vk.microservices.reservation.dto.ReservationDto;
 import learn.vk.microservices.reservation.entity.Reservation;
 import learn.vk.microservices.reservation.exception.NotFoundException;
 import learn.vk.microservices.reservation.repository.ReservationRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,35 +15,22 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public ReservationDto getInventoryByProductId(Long productId) {
+    public ReservationDto getReservationById(Long productId) {
         Reservation reservation = reservationRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("Inventory not found"));
+                .orElseThrow(() -> new NotFoundException("Reservation not found"));
 
         ReservationDto reservationDto = new ReservationDto();
-        reservationDto.setProductId(reservation.getItemId());
-        reservationDto.setQuantity(reservation.getQuantity());
-        return reservationDto;
+        BeanUtils.copyProperties(reservation, reservationDto);
 
-    }
-
-    public ReservationDto updateInventoryItem(ReservationDto reservationDto) {
-        Reservation reservation = reservationRepository.findById(reservationDto.getProductId())
-                .orElseThrow(() -> new NotFoundException("Inventory not found"));
-        reservation.setQuantity(reservationDto.getQuantity());
-
-        reservation = reservationRepository.save(reservation);
-        reservationDto.setQuantity(reservation.getQuantity());
         return reservationDto;
     }
 
-    public ReservationDto createInventoryItem(ReservationDto reservationDto) {
+    public ReservationDto makeReservation(ReservationDto reservationDto) {
         Reservation reservation = new Reservation();
-        reservation.setItemId(reservationDto.getProductId());
-        reservation.setQuantity(reservationDto.getQuantity());
+        BeanUtils.copyProperties(reservationDto, reservation);
 
         reservation = reservationRepository.save(reservation);
-
-        reservationDto.setProductId(reservation.getItemId());
+        reservationDto.setId(reservation.getId());
         return reservationDto;
     }
 }

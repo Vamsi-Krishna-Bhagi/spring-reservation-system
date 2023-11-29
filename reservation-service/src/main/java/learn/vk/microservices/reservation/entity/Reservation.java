@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -14,7 +16,10 @@ import lombok.NoArgsConstructor;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long itemId;
+    private Long id;
 
-    private Long quantity;
+    private Long customerId;
+    private Long hotelId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }
