@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 public class Customer {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long itemId;
+    private Long id;
 
-    private Long quantity;
+    private String name;
+    private String email;
+    private String password;
 }

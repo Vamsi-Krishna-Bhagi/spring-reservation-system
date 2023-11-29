@@ -10,17 +10,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CustomerServiceApplication {
 
-	@Autowired
-	private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
-	public static void main(String[] args) {
-		SpringApplication.run(CustomerServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CustomerServiceApplication.class, args);
+    }
 
-	@PostConstruct
-	public void init() {
-		customerRepository.save(new Customer(1L, 10L));
-		customerRepository.save(new Customer(2L, 20L));
-		customerRepository.save(new Customer(3L, 30L));
-	}
+    @PostConstruct
+    public void init() {
+        customerRepository.save(new Customer(1L, "Vijay Kumar", "vijaykumar@gmail.com", "1234567890"));
+        customerRepository.save(new Customer(2L, "Rajesh Kumar", "rajeshkumar@gmail.com", "1234567890"));
+        customerRepository.save(new Customer(3L, "Ramesh Kumar", "ramesh@yahoo.com", "1234567890"));
+    }
 }

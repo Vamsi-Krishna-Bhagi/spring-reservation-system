@@ -5,7 +5,7 @@ import learn.vk.microservices.customer.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/customers")
 public class CustomerController {
     private final CustomerService customerService;
 
@@ -14,17 +14,12 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public CustomerDto getInventory(@PathVariable Long id) {
-        return customerService.getInventoryByProductId(id);
-    }
-
-    @PutMapping
-    public CustomerDto createInventory(@RequestBody CustomerDto customerDto) {
-        return customerService.updateInventoryItem(customerDto);
+    public CustomerDto getCustomerById(@PathVariable Long id) {
+        return customerService.getCustomerById(id);
     }
 
     @PostMapping
-    public CustomerDto updateInventory(@RequestBody CustomerDto customerDto) {
-        return customerService.createInventoryItem(customerDto);
+    public CustomerDto register(@RequestBody CustomerDto customerDto) {
+        return customerService.createCustomer(customerDto);
     }
 }
