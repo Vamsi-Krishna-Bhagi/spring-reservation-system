@@ -13,18 +13,8 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @GetMapping("/{id}")
-    public NotificationDto getInventory(@PathVariable Long id) {
-        return notificationService.getInventoryByProductId(id);
-    }
-
-    @PutMapping
-    public NotificationDto createInventory(@RequestBody NotificationDto notificationDto) {
-        return notificationService.updateInventoryItem(notificationDto);
-    }
-
     @PostMapping
-    public NotificationDto updateInventory(@RequestBody NotificationDto notificationDto) {
-        return notificationService.createInventoryItem(notificationDto);
+    public NotificationDto sendNotification(@RequestBody NotificationDto notificationDto) {
+        return notificationService.sendNotification(notificationDto);
     }
 }

@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class NotificationDto {
-    private Long productId;
-    private Long quantity;
+    private Long id;
+
+    private String message;
+    private String email;
 }
