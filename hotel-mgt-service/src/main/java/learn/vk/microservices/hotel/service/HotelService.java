@@ -4,6 +4,7 @@ import learn.vk.microservices.hotel.dto.HotelDto;
 import learn.vk.microservices.hotel.entity.Hotel;
 import learn.vk.microservices.hotel.exception.NotFoundException;
 import learn.vk.microservices.hotel.repository.HotelRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,35 +15,25 @@ public class HotelService {
         this.hotelRepository = hotelRepository;
     }
 
-    public HotelDto getInventoryByProductId(Long productId) {
+    public HotelDto getHotelById(Long productId) {
         Hotel hotel = hotelRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("Inventory not found"));
+                .orElseThrow(() -> new NotFoundException("Hotel not found"));
 
         HotelDto hotelDto = new HotelDto();
-        hotelDto.setProductId(hotel.getItemId());
-        hotelDto.setQuantity(hotel.getQuantity());
+        BeanUtils.copyProperties(hotel,hotelDto);
         return hotelDto;
 
     }
 
-    public HotelDto updateInventoryItem(HotelDto hotelDto) {
-        Hotel hotel = hotelRepository.findById(hotelDto.getProductId())
-                .orElseThrow(() -> new NotFoundException("Inventory not found"));
-        hotel.setQuantity(hotelDto.getQuantity());
+    public HotelDto updateHotel(HotelDto hotelDto) {
+        Hotel hotel = hotelRepository.findById(hotelDto.getId())
+                .orElseThrow(() -> new NotFoundException("Hotel not found"));
+        hotel.setAvailableRooms(hotelDto.getAvailableRooms());
+        hotel.setName(hotelDto.getName());
 
         hotel = hotelRepository.save(hotel);
-        hotelDto.setQuantity(hotel.getQuantity());
+        BeanUtils.copyProperties(hotel,hotelDto);
         return hotelDto;
     }
 
-    public HotelDto createInventoryItem(HotelDto hotelDto) {
-        Hotel hotel = new Hotel();
-        hotel.setItemId(hotelDto.getProductId());
-        hotel.setQuantity(hotelDto.getQuantity());
-
-        hotel = hotelRepository.save(hotel);
-
-        hotelDto.setProductId(hotel.getItemId());
-        return hotelDto;
-    }
 }

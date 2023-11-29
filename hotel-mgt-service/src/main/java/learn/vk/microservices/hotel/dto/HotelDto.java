@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class HotelDto {
-    private Long productId;
-    private Long quantity;
+    private Long id;
+    private Long availableRooms;
+    private String name;
 }

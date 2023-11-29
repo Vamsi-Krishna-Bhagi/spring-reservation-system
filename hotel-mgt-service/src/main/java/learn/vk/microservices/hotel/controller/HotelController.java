@@ -14,17 +14,12 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
-    public HotelDto getInventory(@PathVariable Long id) {
-        return hotelService.getInventoryByProductId(id);
-    }
-
-    @PutMapping
-    public HotelDto createInventory(@RequestBody HotelDto hotelDto) {
-        return hotelService.updateInventoryItem(hotelDto);
+    public HotelDto getHotelById(@PathVariable Long id) {
+        return hotelService.getHotelById(id);
     }
 
     @PostMapping
-    public HotelDto updateInventory(@RequestBody HotelDto hotelDto) {
-        return hotelService.createInventoryItem(hotelDto);
+    public HotelDto updateHotel(@RequestBody HotelDto hotelDto) {
+        return hotelService.updateHotel(hotelDto);
     }
 }

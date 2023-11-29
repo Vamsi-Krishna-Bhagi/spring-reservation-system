@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 public class Hotel {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long itemId;
+    private Long id;
 
-    private Long quantity;
+    private Long availableRooms;
+    private String name;
 }
