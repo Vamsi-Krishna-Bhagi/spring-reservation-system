@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 public class Payment {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long itemId;
+    private Long id;
 
-    private Long quantity;
+    private Long reservationId;
+    private Double amount;
 }

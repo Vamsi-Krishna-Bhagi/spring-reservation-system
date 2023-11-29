@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PaymentDto {
-    private Long productId;
-    private Long quantity;
+    private Long id;
+    private Long reservationId;
+    private Double amount;
 }

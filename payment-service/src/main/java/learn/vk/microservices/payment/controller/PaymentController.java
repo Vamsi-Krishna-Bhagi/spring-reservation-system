@@ -14,17 +14,13 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
-    public PaymentDto getInventory(@PathVariable Long id) {
-        return paymentService.getInventoryByProductId(id);
+    public PaymentDto getPaymentById(@PathVariable Long id) {
+        return paymentService.getPaymentById(id);
     }
 
-    @PutMapping
-    public PaymentDto createInventory(@RequestBody PaymentDto paymentDto) {
-        return paymentService.updateInventoryItem(paymentDto);
-    }
 
     @PostMapping
-    public PaymentDto updateInventory(@RequestBody PaymentDto paymentDto) {
-        return paymentService.createInventoryItem(paymentDto);
+    public PaymentDto makePayment(@RequestBody PaymentDto paymentDto) {
+        return paymentService.makePayment(paymentDto);
     }
 }
