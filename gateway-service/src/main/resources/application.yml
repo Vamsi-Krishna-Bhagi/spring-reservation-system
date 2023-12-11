@@ -1,0 +1,36 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway-service
+    cloud:
+      gateway:
+        routes:
+          - id: customer-route
+            uri: lb://customer-service
+            predicates:
+              - Path=/customers/**
+          - id: hotel-mgt-route
+            uri: lb://hotel-mgt-service
+            predicates:
+              - Path=/hotels/**
+          - id: notification-route
+            uri: lb://notification-service
+            predicates:
+              - Path=/notifications/**
+          - id: reservation-route
+            uri: lb://reservation-service
+            predicates:
+              - Path=/reservations/**
+          - id: payment-route
+            uri: lb://payment-service
+            predicates:
+              - Path=/payments/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+
+

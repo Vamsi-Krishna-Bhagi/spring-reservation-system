@@ -1,6 +1,8 @@
 server:
-  port: 8081
+  port: 8084
 spring:
+  application:
+    name: payment-service
   datasource:
     url: jdbc:h2:file:./data/paymentdb
     username: sa

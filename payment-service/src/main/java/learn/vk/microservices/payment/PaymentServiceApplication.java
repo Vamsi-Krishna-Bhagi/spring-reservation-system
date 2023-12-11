@@ -6,8 +6,10 @@ import learn.vk.microservices.payment.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class PaymentServiceApplication {
 
 	@Autowired
@@ -17,10 +19,4 @@ public class PaymentServiceApplication {
 		SpringApplication.run(PaymentServiceApplication.class, args);
 	}
 
-	@PostConstruct
-	public void init() {
-		paymentRepository.save(new Payment(1L, 10L));
-		paymentRepository.save(new Payment(2L, 20L));
-		paymentRepository.save(new Payment(3L, 30L));
-	}
 }

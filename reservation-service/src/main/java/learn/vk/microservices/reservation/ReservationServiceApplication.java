@@ -6,8 +6,10 @@ import learn.vk.microservices.reservation.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class ReservationServiceApplication {
 
 	@Autowired
@@ -17,10 +19,4 @@ public class ReservationServiceApplication {
 		SpringApplication.run(ReservationServiceApplication.class, args);
 	}
 
-	@PostConstruct
-	public void init() {
-		reservationRepository.save(new Reservation(1L, 10L));
-		reservationRepository.save(new Reservation(2L, 20L));
-		reservationRepository.save(new Reservation(3L, 30L));
-	}
 }

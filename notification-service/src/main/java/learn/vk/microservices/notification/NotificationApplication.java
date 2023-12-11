@@ -6,8 +6,10 @@ import learn.vk.microservices.notification.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class NotificationApplication {
 
 	@Autowired
@@ -17,10 +19,4 @@ public class NotificationApplication {
 		SpringApplication.run(NotificationApplication.class, args);
 	}
 
-	@PostConstruct
-	public void init() {
-		notificationRepository.save(new Notification(1L, 10L));
-		notificationRepository.save(new Notification(2L, 20L));
-		notificationRepository.save(new Notification(3L, 30L));
-	}
 }
