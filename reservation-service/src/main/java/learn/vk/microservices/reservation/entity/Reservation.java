@@ -1,6 +1,7 @@
 package learn.vk.microservices.reservation.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import learn.vk.microservices.reservation.dto.ReservationStatus;
@@ -24,5 +25,6 @@ public class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @Enumerated(jakarta.persistence.EnumType.STRING)
     private ReservationStatus status;
 }
