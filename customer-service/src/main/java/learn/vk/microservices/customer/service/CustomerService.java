@@ -4,12 +4,19 @@ import learn.vk.microservices.customer.dto.CustomerDto;
 import learn.vk.microservices.customer.entity.Customer;
 import learn.vk.microservices.customer.exception.NotFoundException;
 import learn.vk.microservices.customer.repository.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class CustomerService {
     private final CustomerRepository customerRepository;
+
+    @Autowired
+    KafkaTemplate<String, CustomerDto> kafkaTemplate;
 
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -21,6 +28,7 @@ public class CustomerService {
 
         CustomerDto customerDto = new CustomerDto();
         BeanUtils.copyProperties(customer, customerDto, "password");
+
         return customerDto;
     }
 
@@ -29,9 +37,12 @@ public class CustomerService {
         BeanUtils.copyProperties(customerDto, customer );
 
         customer = customerRepository.save(customer);
+        log.info("Customer created: " + customer.getId());
 
         customerDto.setId(customer.getId());
         customerDto.setPassword(null);
+
+        kafkaTemplate.send("CustomerCreated", customerDto);
         return customerDto;
     }
 }

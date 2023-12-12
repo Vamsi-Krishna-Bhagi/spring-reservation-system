@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotificationDto {
+public class ReservationNotificationDto {
     private String customerName;
     private String customerEmail;
     private String hotelName;

@@ -1,6 +1,5 @@
 package learn.vk.microservices.notification.controller;
 
-import learn.vk.microservices.notification.dto.NotificationDto;
 import learn.vk.microservices.notification.entity.Notification;
 import learn.vk.microservices.notification.service.NotificationService;
 import org.springframework.web.bind.annotation.*;

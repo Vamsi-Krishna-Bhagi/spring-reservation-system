@@ -1,11 +1,12 @@
 package learn.vk.microservices.notification.dto;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
-public class HotelDto {
+@ToString
+public class CustomerNotificationDto {
     private Long id;
-    private Long availableRooms;
     private String name;
-    private Double pricePerNight;
+    private String email;
 }
