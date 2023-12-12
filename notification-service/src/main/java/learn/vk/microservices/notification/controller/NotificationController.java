@@ -5,7 +5,7 @@ import learn.vk.microservices.notification.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/notifications")
 public class NotificationController {
     private final NotificationService notificationService;
 

@@ -5,7 +5,7 @@ import learn.vk.microservices.payment.service.PaymentService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/payments")
 public class PaymentController {
     private final PaymentService paymentService;
 
