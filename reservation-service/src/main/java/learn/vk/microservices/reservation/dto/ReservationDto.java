@@ -11,4 +11,6 @@ public class ReservationDto {
     private Long hotelId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private ReservationStatus status;
+
 }

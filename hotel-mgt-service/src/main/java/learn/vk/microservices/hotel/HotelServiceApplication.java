@@ -22,8 +22,8 @@ public class HotelServiceApplication {
 
     @PostConstruct
     public void init() {
-        hotelRepository.save(new Hotel(1L, 10L, "Hotel A"));
-        hotelRepository.save(new Hotel(2L, 20L, "Hotel B"));
-        hotelRepository.save(new Hotel(3L, 30L, "Hotel C"));
+        hotelRepository.save(new Hotel(1L, 10L, "Hotel A", 100.0));
+        hotelRepository.save(new Hotel(2L, 20L, "Hotel B", 200.0));
+        hotelRepository.save(new Hotel(3L, 30L, "Hotel C", 300.0));
     }
 }

@@ -5,7 +5,7 @@ import learn.vk.microservices.reservation.service.ReservationService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
 

@@ -18,4 +18,5 @@ public class Hotel {
 
     private Long availableRooms;
     private String name;
+    private Double pricePerNight;
 }

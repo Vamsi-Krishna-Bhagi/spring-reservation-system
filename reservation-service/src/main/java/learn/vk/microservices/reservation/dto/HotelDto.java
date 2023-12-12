@@ -1,4 +1,4 @@
-package learn.vk.microservices.hotel.dto;
+package learn.vk.microservices.reservation.dto;
 
 import lombok.Data;
 
