@@ -1,30 +1,34 @@
 package learn.vk.microservices.reservation.service;
 
-import learn.vk.microservices.reservation.client.CustomerClient;
-import learn.vk.microservices.reservation.client.HotelClient;
-import learn.vk.microservices.reservation.client.PaymentClient;
 import learn.vk.microservices.reservation.dto.*;
 import learn.vk.microservices.reservation.entity.Reservation;
-import learn.vk.microservices.reservation.exception.GenericException;
 import learn.vk.microservices.reservation.exception.NotFoundException;
 import learn.vk.microservices.reservation.repository.ReservationRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import static learn.vk.microservices.reservation.dto.Constants.*;
 
 @Service
+@Slf4j
 public class ReservationService {
-    private final ReservationRepository reservationRepository;
-    private final CustomerClient customerClient;
-    private final HotelClient hotelClient;
-    private final PaymentClient paymentClient;
 
-    public ReservationService(ReservationRepository reservationRepository, CustomerClient customerClient, HotelClient hotelClient, PaymentClient paymentClient) {
+    private final ReservationRepository reservationRepository;
+    private final CustomerService customerService;
+    private final HotelsService hotelsService;
+    private final PaymentsService paymentsService;
+
+    private final KafkaTemplate<String, NotificationDto> kafkaTemplate;
+
+    public ReservationService(ReservationRepository reservationRepository, CustomerService customerService,
+                              HotelsService hotelsService, PaymentsService paymentsService, KafkaTemplate<String, NotificationDto> kafkaTemplate) {
         this.reservationRepository = reservationRepository;
-        this.customerClient = customerClient;
-        this.hotelClient = hotelClient;
-        this.paymentClient = paymentClient;
+        this.customerService = customerService;
+        this.hotelsService = hotelsService;
+        this.paymentsService = paymentsService;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public ReservationDto getReservationById(Long productId) {
@@ -38,43 +42,64 @@ public class ReservationService {
     }
 
     public ReservationDto makeReservation(ReservationDto reservationDto) {
-        CustomerDto customerDto = Objects.requireNonNull(customerClient.getCustomerById(reservationDto.getCustomerId()));
-        if (customerDto.getId() == null) {
-            throw new NotFoundException("Customer not found");
-        }
 
-        HotelDto hotelDto = Objects.requireNonNull(hotelClient.getHotelById(reservationDto.getHotelId()));
-        if (hotelDto.getId() == null) {
-            throw new NotFoundException("Hotel not found");
-        } else if (hotelDto.getAvailableRooms() < 1) {
-            throw new GenericException("Rooms not available");
-        }
+        CustomerDto customerDto = customerService.getCustomerById(reservationDto.getCustomerId());
+        log.info("Customer found: " + customerDto.getName());
+
+        HotelDto hotelDto = hotelsService.getHotelById(reservationDto.getHotelId());
+        log.info("Hotel found: " + hotelDto.getName());
 
         reservationDto.setStatus(ReservationStatus.CREATED);
         Reservation reservation = new Reservation();
         BeanUtils.copyProperties(reservationDto, reservation);
         reservation = reservationRepository.save(reservation);
+        log.info("Reservation created: " + reservation.getId());
         reservationDto.setId(reservation.getId());
 
-        PaymentDto paymentDto = new PaymentDto();
-        paymentDto.setAmount(hotelDto.getPricePerNight());
-        paymentDto.setReservationId(reservation.getId());
-
-        paymentDto = Objects.requireNonNull(paymentClient.makePayment(paymentDto));
-        if (paymentDto.getId() == null) {
-            throw new GenericException("Payment failed");
+        PaymentDto paymentDto = null;
+        try {
+            paymentDto = paymentsService.makePayment(reservationDto, hotelDto, reservation);
+        } catch (Exception e) {
+            NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
+            kafkaTemplate.send(PAYMENT_FAILED, notificationDto);
+            throw e;
+        } finally {
+            reservationRepository.save(reservation);
         }
-//        TODO: Add saga pattern
-        reservation.setStatus(ReservationStatus.PAID);
-        reservationRepository.save(reservation);
 
+        try {
+            hotelsService.handleHotels(reservationDto, hotelDto, reservation);
+        } catch (Exception e) {
+            paymentsService.reversePayment(paymentDto);
 
-        hotelDto.setAvailableRooms(hotelDto.getAvailableRooms() - 1);
-        hotelClient.updateHotel(hotelDto);
-//        TODO: Add saga pattern
-        reservation.setStatus(ReservationStatus.RESERVED);
-        reservationRepository.save(reservation);
+            NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
+            kafkaTemplate.send(RESERVATION_FAILED, notificationDto);
+
+            throw e;
+        } finally {
+            reservationRepository.save(reservation);
+        }
+
+        log.info("Reservation updated. id= {}, status= {}", reservation.getId(), reservation.getStatus());
+
+        NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
+
+        kafkaTemplate.send(RESERVATION_CONFIRMED, notificationDto);
+        log.info("Notification sent to customer: " + notificationDto.getCustomerEmail());
 
         return reservationDto;
+    }
+
+
+    private static NotificationDto getNotificationDto(ReservationDto reservationDto, CustomerDto customerDto, HotelDto hotelDto) {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setCustomerEmail(customerDto.getEmail());
+        notificationDto.setCustomerName(customerDto.getName());
+        notificationDto.setHotelName(hotelDto.getName());
+        notificationDto.setPricePerNight(hotelDto.getPricePerNight());
+        notificationDto.setStartDate(reservationDto.getStartDate());
+        notificationDto.setEndDate(reservationDto.getEndDate());
+        notificationDto.setStatus(reservationDto.getStatus());
+        return notificationDto;
     }
 }

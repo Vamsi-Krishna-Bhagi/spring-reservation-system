@@ -1,14 +1,10 @@
-package learn.vk.microservices.notification.dto;
+package learn.vk.microservices.reservation.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class NotificationDto {
     private String customerName;
     private String customerEmail;

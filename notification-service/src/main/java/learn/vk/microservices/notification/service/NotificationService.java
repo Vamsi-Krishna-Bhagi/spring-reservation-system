@@ -15,12 +15,15 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public NotificationDto sendNotification(NotificationDto notificationDto) {
-        Notification notification = new Notification();
-        BeanUtils.copyProperties(notificationDto, notification);
-
+    public Notification sendNotification(Notification notification) {
         notification = notificationRepository.save(notification);
-        notificationDto.setId(notification.getId());
-        return notificationDto;
+
+        return notification;
+    }
+
+    public Notification getNotification(Long id) {
+
+        return notificationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Notification not found"));
     }
 }

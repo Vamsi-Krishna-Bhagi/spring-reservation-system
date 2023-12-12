@@ -1,6 +1,7 @@
 package learn.vk.microservices.notification.controller;
 
 import learn.vk.microservices.notification.dto.NotificationDto;
+import learn.vk.microservices.notification.entity.Notification;
 import learn.vk.microservices.notification.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,13 @@ public class NotificationController {
     }
 
     @PostMapping
-    public NotificationDto sendNotification(@RequestBody NotificationDto notificationDto) {
-        return notificationService.sendNotification(notificationDto);
+    public Notification sendNotification(@RequestBody Notification notification) {
+        return notificationService.sendNotification(notification);
+    }
+
+    @GetMapping("/{id}")
+    public Notification getNotification(@PathVariable Long id) {
+        return notificationService.getNotification(id);
     }
 }
  
