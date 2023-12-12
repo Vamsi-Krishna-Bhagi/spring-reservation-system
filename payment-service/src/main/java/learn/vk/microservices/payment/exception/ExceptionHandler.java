@@ -1,12 +1,14 @@
 package learn.vk.microservices.payment.exception;
 
 import learn.vk.microservices.payment.dto.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler(NotFoundException.class)
@@ -25,6 +27,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private Message buildResponseEntity(String message) {
+        log.error(message);
         return new Message(message, Message.Status.FAILURE);
     }
 }

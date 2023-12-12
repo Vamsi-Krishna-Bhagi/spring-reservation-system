@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static learn.vk.microservices.reservation.dto.Constants.*;
+import static learn.vk.microservices.reservation.dto.Constants.REFUND_CONFIRMED;
+import static learn.vk.microservices.reservation.dto.Constants.REFUND_FAILED;
 import static learn.vk.microservices.reservation.util.NotificationUtil.getNotificationDto;
 
 @Service
 @Slf4j
-public class ReservationService {
+public class ReservationCancelService {
 
     private final ReservationRepository reservationRepository;
     private final CustomerService customerService;
@@ -25,7 +26,7 @@ public class ReservationService {
 
     private final KafkaTemplate<String, NotificationDto> kafkaTemplate;
 
-    public ReservationService(ReservationRepository reservationRepository, CustomerService customerService,
+    public ReservationCancelService(ReservationRepository reservationRepository, CustomerService customerService,
                               HotelsService hotelsService, PaymentsService paymentsService, KafkaTemplate<String, NotificationDto> kafkaTemplate) {
         this.reservationRepository = reservationRepository;
         this.customerService = customerService;
@@ -34,63 +35,55 @@ public class ReservationService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public ReservationDto getReservationById(Long productId) {
-        Reservation reservation = reservationRepository.findById(productId)
+    public ReservationDto cancelReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new NotFoundException("Reservation not found"));
 
+        CustomerDto customerDto = customerService.getCustomerById(reservation.getCustomerId());
+        HotelDto hotelDto = hotelsService.getHotelById(reservation.getHotelId());
         ReservationDto reservationDto = new ReservationDto();
         BeanUtils.copyProperties(reservation, reservationDto);
 
-        return reservationDto;
-    }
-
-    public ReservationDto makeReservation(ReservationDto reservationDto) {
-
-        CustomerDto customerDto = customerService.getCustomerById(reservationDto.getCustomerId());
-        log.info("Customer found: " + customerDto.getName());
-
-        HotelDto hotelDto = hotelsService.getHotelById(reservationDto.getHotelId());
-        log.info("Hotel found: " + hotelDto.getName());
-
-        reservationDto.setStatus(ReservationStatus.CREATED);
-        Reservation reservation = new Reservation();
-        BeanUtils.copyProperties(reservationDto, reservation);
-        reservation = reservationRepository.save(reservation);
-        log.info("Reservation created: " + reservation.getId());
-        reservationDto.setId(reservation.getId());
-
-        PaymentDto paymentDto = null;
+//        Payment Refund
+        //Check if reservation is in future
+        if (reservation.getStartDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Cannot cancel reservation in past");
+        }
+        PaymentDto paymentDto;
         try {
-            paymentDto = paymentsService.makePayment(reservationDto, hotelDto, reservation);
+            paymentDto = paymentsService.processRefund(reservation);
+
         } catch (Exception e) {
+
             NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
-            kafkaTemplate.send(PAYMENT_FAILED, notificationDto);
+            kafkaTemplate.send(REFUND_FAILED, notificationDto);
+            log.error("Error while processing refund for reservation: " + reservationId);
             throw e;
         } finally {
             reservationRepository.save(reservation);
         }
 
         try {
-            hotelsService.bookHotelRoom(reservationDto, hotelDto, reservation);
+            hotelsService.releaseHotelRoom(reservationDto, hotelDto, reservation);
         } catch (Exception e) {
             paymentsService.reversePayment(paymentDto);
 
             NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
-            kafkaTemplate.send(RESERVATION_FAILED, notificationDto);
+            kafkaTemplate.send(REFUND_FAILED, notificationDto);
 
             throw e;
         } finally {
             reservationRepository.save(reservation);
         }
 
-        log.info("Reservation updated. id= {}, status= {}", reservation.getId(), reservation.getStatus());
+        log.info("Reservation cancelled. id= {}, status= {}", reservation.getId(), reservation.getStatus());
 
         NotificationDto notificationDto = getNotificationDto(reservationDto, customerDto, hotelDto);
 
-        kafkaTemplate.send(RESERVATION_CONFIRMED, notificationDto);
+        kafkaTemplate.send(REFUND_CONFIRMED, notificationDto);
         log.info("Notification sent to customer: " + notificationDto.getCustomerEmail());
 
         return reservationDto;
-    }
 
+    }
 }

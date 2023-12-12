@@ -23,4 +23,9 @@ public class PaymentController {
     public PaymentDto makePayment(@RequestBody PaymentDto paymentDto) {
         return paymentService.makePayment(paymentDto);
     }
+
+    @DeleteMapping("/{id}")
+    public PaymentDto processRefund(@PathVariable Long id) {
+       return  paymentService.processRefund(id);
+    }
 }

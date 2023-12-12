@@ -22,6 +22,7 @@ public class Reservation {
 
     private Long customerId;
     private Long hotelId;
+    private Long paymentId;
     private LocalDate startDate;
     private LocalDate endDate;
 

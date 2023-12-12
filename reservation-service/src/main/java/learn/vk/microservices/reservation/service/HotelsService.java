@@ -19,7 +19,7 @@ public class HotelsService {
     @Autowired
     private HotelClient hotelClient;
 
-    void handleHotels(ReservationDto reservationDto, HotelDto hotelDto, Reservation reservation) {
+    void bookHotelRoom(ReservationDto reservationDto, HotelDto hotelDto, Reservation reservation) {
         hotelDto.setAvailableRooms(hotelDto.getAvailableRooms() - 1);
         try {
             hotelDto = hotelClient.updateHotel(hotelDto);
@@ -32,6 +32,22 @@ public class HotelsService {
         }
         reservation.setStatus(ReservationStatus.RESERVED);
         reservationDto.setStatus(ReservationStatus.RESERVED);
+    }
+
+
+    void releaseHotelRoom(ReservationDto reservationDto, HotelDto hotelDto, Reservation reservation) {
+        hotelDto.setAvailableRooms(hotelDto.getAvailableRooms() + 1);
+        try {
+            hotelDto = hotelClient.updateHotel(hotelDto);
+            log.info("Hotel updated: " + hotelDto.getId());
+        } catch (Exception e) {
+            reservation.setStatus(ReservationStatus.RESEVATION_FAILED);
+            reservationDto.setStatus(ReservationStatus.RESEVATION_FAILED);
+
+            throw e;
+        }
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        reservationDto.setStatus(ReservationStatus.CANCELLED);
     }
 
     HotelDto getHotelById(Long hotelId) {

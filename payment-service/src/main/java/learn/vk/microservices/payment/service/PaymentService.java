@@ -33,4 +33,20 @@ public class PaymentService {
         paymentDto.setId(payment.getId());
         return paymentDto;
     }
+
+    public PaymentDto processRefund(Long id) {
+        Payment originalPayment = paymentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Payment not found"));
+
+        Payment refundPayment = new Payment();
+        refundPayment.setAmount(originalPayment.getAmount() * -1);
+        refundPayment.setReservationId(originalPayment.getReservationId());
+
+        refundPayment = paymentRepository.save(refundPayment);
+
+        PaymentDto paymentDto = new PaymentDto();
+        BeanUtils.copyProperties(refundPayment, paymentDto);
+        return paymentDto;
+
+    }
 }

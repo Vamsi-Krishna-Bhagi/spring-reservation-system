@@ -9,6 +9,7 @@ public class ReservationDto {
     private Long id;
     private Long customerId;
     private Long hotelId;
+    private Long paymentId;
     private LocalDate startDate;
     private LocalDate endDate;
     private ReservationStatus status;

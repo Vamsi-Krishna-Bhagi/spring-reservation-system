@@ -37,6 +37,8 @@ public class PaymentsService {
             reservationDto.setStatus(ReservationStatus.PAYMENT_FAILED);
             throw e;
         }
+        reservation.setPaymentId(paymentDto.getId());
+        reservationDto.setPaymentId(paymentDto.getId());
         reservation.setStatus(ReservationStatus.PAID);
         reservationDto.setStatus(ReservationStatus.PAID);
 
@@ -45,11 +47,10 @@ public class PaymentsService {
         return paymentDto;
     }
 
-    public PaymentDto reversePayment(PaymentDto paymentDto) {
+    public PaymentDto reversePayment( PaymentDto paymentDto) {
         PaymentDto reversePayment = new PaymentDto();
         reversePayment.setAmount(paymentDto.getAmount() * -1);
         reversePayment.setReservationId(paymentDto.getReservationId());
-
 
         paymentDto = Objects.requireNonNull(paymentClient.makePayment(paymentDto));
         if (paymentDto.getId() == null) {
@@ -59,5 +60,25 @@ public class PaymentsService {
         log.info("Payment successful: " + paymentDto.getId());
 
         return reversePayment;
+    }
+
+    public PaymentDto processRefund(Reservation reservation) {
+
+        PaymentDto paymentDto;
+        try {
+            paymentDto = Objects.requireNonNull(paymentClient.processRefund(reservation.getPaymentId()));
+            if (paymentDto.getId() == null) {
+                throw new GenericException("Refund failed");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            reservation.setStatus(ReservationStatus.REFUND_FAILED);
+            throw e;
+        }
+
+        reservation.setPaymentId(paymentDto.getId());
+        log.info("Refund successful: " + paymentDto.getId());
+
+        return paymentDto;
     }
 }
