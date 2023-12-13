@@ -101,4 +101,5 @@ _Saga pattern is implemented for the above flow. If any of the above steps fail,
 
 
 Below flow diagram shows the user creation and reservation flow. Similar flow is implemented for reservation cancellation as well.
+
 ![img_2.png](img_2.png)
