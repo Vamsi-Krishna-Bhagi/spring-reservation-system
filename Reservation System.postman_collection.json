@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "6d15a813-0b85-4f19-8193-6537d2ee2fc1",
+		"name": "Capstone-Reservation System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11509952"
+	},
+	"item": [
+		{
+			"name": "Direct Service Calls",
+			"item": [
+				{
+					"name": "Get Customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/customers/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"customers",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Vamsi Krishna\",\n    \"email\": \"bhagivamsi@gmail.com\",\n    \"password\": \"secret_str0ng_p@ssword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateway",
+			"item": [
+				{
+					"name": "Get Customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/customers/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get payment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/payments/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"payments",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get reservation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reservations/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"reservations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Reservation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/reservations/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"reservations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Make reservation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": 1,\n    \"hotelId\":2,\n    \"startDate\":\"2023-12-13\",\n    \"endDate\":\"2023-12-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/reservations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Vamsi Krishna\",\n    \"email\": \"bhagivamsi@gmail.com\",\n    \"password\": \"secret_str0ng_p@ssword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
